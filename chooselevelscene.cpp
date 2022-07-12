@@ -1,104 +1,100 @@
-#include "chooselevelscene.h"
+#include"chooselevelscene.h"
 #include<qmenubar.h>
-#include<QSoundEffect>
-#include<QPainter>
 #include<QPixmap>
-#include"jumppushbutton.h"
+#include<QPainter>
 #include<QTimer>
-#include<QLabel>
-#include"playscene.h"
+#include"mypushbutton.h"
+#include <QLabel>
+#include<qdebug.h>
+#include<QSound>
+#pragma execution_character_set("utf-8")
 
-ChooseLevelScene::ChooseLevelScene(QWidget *parent)
-    : QMainWindow{parent}
+ChooseLevelScene::ChooseLevelScene(QWidget* parent)
+	: QMainWindow(parent)
 {
-    this->setFixedSize(400, 700);
-    this->setWindowIcon(QPixmap(":/res/Coin0001.png"));
-    this->setWindowTitle("é€‰æ‹©å…³å¡");
-    QMenuBar* bar = this->menuBar();
-    this->setMenuBar(bar);
-    QMenu* startMenu = bar->addMenu("å¼€å§‹");
-    QAction* quitAction = startMenu->addAction("é€€å‡º");
+	//ÉèÖÃ´°¿Ú¹Ì¶¨´óÐ¡
+	this->setFixedSize(400, 700);
+	//ÉèÖÃÍ¼±ê
+	this->setWindowIcon(QPixmap(":/res/Coin0001.png"));
+	//ÉèÖÃ±êÌâ
+	this->setWindowTitle("Ñ¡Ôñ¹Ø¿¨");
+	//´´½¨²Ëµ¥À¸
+	QMenuBar* bar = this->menuBar();
+	this->setMenuBar(bar);
+	//´´½¨¿ªÊ¼²Ëµ¥
+	QMenu* startMenu = bar->addMenu("¿ªÊ¼");
+	//´´½¨°´Å¥²Ëµ¥Ïî
+	QAction* quitAction = startMenu->addAction("ÍË³ö  " );
+	//µã»÷ÍË³ö ÍË³öÓÎÏ·
+	connect(quitAction, &QAction::triggered, [=]() {
+		this->close(); });
+	QSound* chooseSound = new QSound(":/res/TapButtonSound.wav", this);
+	QSound* backSound = new QSound(":/res/BackButtonSound.wav", this);
+	//backBtn
+	MyPushButton* backBtn = new MyPushButton(":/res/BackButton.png", ":/res/BackButtonSelected.png");
+	backBtn->setParent(this);
+	backBtn->move(this->width() - backBtn->width(), this->height() - backBtn->height());
+	connect(backBtn, &MyPushButton::clicked, [=]() {
+		////backSound->play();
+		QTimer::singleShot(250, this, [=]() {
+			//´¥·¢×Ô¶¨ÒåÐÅºÅ£¬¹Ø±Õ×ÔÉí£¬¸ÃÐÅºÅÐ´µ½ signalsÏÂ×öÉùÃ÷
+			emit this->chooseSceneBack();
+			});
+		});
+	//creat choose level btn
+	for (int i = 0; i < 20; i++) {
+		MyPushButton* menuBtn = new MyPushButton(":/res/LevelIcon.png");
+		menuBtn->setParent(this);
+		menuBtn->move(40 + i % 4 * 90, 150 + i / 4 * 90);
+		//monitor every level btn event
+		connect(menuBtn, &MyPushButton::clicked, [=]() {
+			////chooseSound->play();
+			//QString str = QString("Ñ¡ÔñµÄÊÇµÚ%1¹Ø").arg(i + 1);
+			//qDebug() << str;
+			this->hide();	//hide level scence
+			pScence = new PlayScence(i + 1);//creat game scence
+			pScence->setGeometry(this->geometry());
+			pScence->show();
+			//monitor back btn
+			connect(pScence, &PlayScence::chooseSceneBack, [=]() {
+				this->setGeometry(pScence->geometry());
+				////backSound->play();
+				this->show();
+				delete pScence;
+				pScence = Q_NULLPTR;
+				});
+			});
 
-    connect(quitAction, &QAction::triggered, [=]() {
-        this->close(); });
-    QSoundEffect* chooseSound = new QSoundEffect;
-    chooseSound->setSource(QUrl::fromLocalFile(":/res/TapButtonSound.wav"));
-
-    //        chooseSound->play();
-    QSoundEffect* backSound = new QSoundEffect;
-    backSound->setSource(QUrl::fromLocalFile(":/res/BackButtonSound.wav"));
-
-    //backBtn
-    JumpPushButton* backBtn = new JumpPushButton(":/res/BackButton.png", ":/res/BackButtonSelected.png");
-    backBtn->setParent(this);
-    backBtn->move(this->width() - backBtn->width(), this->height() - backBtn->height());
-    connect(backBtn, &JumpPushButton::clicked, [=]() {
-        backSound->play();
-        QTimer::singleShot(50, this, [=]() {
-            //è§¦å‘è‡ªå®šä¹‰ä¿¡å·ï¼Œå…³é—­è‡ªèº«ï¼Œè¯¥ä¿¡å·å†™åˆ° signalsä¸‹åšå£°æ˜Ž
-            emit this->chooseSceneBack();
-        });
-    });
-    //creat choose level btn
-    for (int i = 0; i < 20; i++) {
-        JumpPushButton* menuBtn = new JumpPushButton(":/res/LevelIcon.png");
-        menuBtn->setParent(this);
-        menuBtn->move(40 + i % 4 * 90, 150 + i / 4 * 90);
-        //monitor every level btn event
-        connect(menuBtn, &JumpPushButton::clicked, [=]() {
-            chooseSound->play();
-            //QString str = QString("é€‰æ‹©çš„æ˜¯ç¬¬%1å…³").arg(i + 1);
-            //qDebug() << str;
-            this->hide();	//hide level scence
-            pScene = new PlayScene(i + 1);//creat game scence
-
-            pScene->setGeometry(this->geometry());
-            pScene->show();
-            //monitor back btn in playscene
-            connect(pScene, &PlayScene::chooseSceneBack, [=]() {
-                this->setGeometry(pScene->geometry());
-                backSound->play();
-                this->show();
-                delete pScene;
-                pScene = Q_NULLPTR;
-            });
-        });
-        //æŒ‰é’®ä¸Šæ˜¾ç¤ºçš„æ–‡å­—
-        QLabel* label = new QLabel;
-        label->setParent(this);
-        label->setFixedSize(menuBtn->width(), menuBtn->height());
-        label->setText(QString::number(i + 1));
-        QFont font;
-        font.setFamily("Microsoft YaHei");
-        font.setPointSize(14);
-        label->setFont(font);
-        label->setAlignment(Qt::AlignCenter);//equal to Qt::AlignHCenter | Qt::AlignVCenter
-        label->move(40 + i % 4 * 90, 150 + i / 4 * 90);
-        //mouse event pierce through
-        //label bolck button
-        label->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-
-    }
+		//°´Å¥ÉÏÏÔÊ¾µÄÎÄ×Ö
+		QLabel* label = new QLabel;
+		label->setParent(this);
+		label->setFixedSize(menuBtn->width(), menuBtn->height());
+		label->setText(QString::number(i + 1));
+		QFont font;
+		font.setFamily("Microsoft YaHei");
+		font.setPointSize(14);
+		label->setFont(font);
+		label->setAlignment(Qt::AlignCenter);//equal to Qt::AlignHCenter | Qt::AlignVCenter
+		label->move(40 + i % 4 * 90, 150 + i / 4 * 90);
+		//mouse event pierce through
+		//label µ²×¡button
+		label->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+	}
 }
 
 void ChooseLevelScene::paintEvent(QPaintEvent*)
 {
-    QPainter painter(this);
-    QPixmap pix;
-    pix.load(":/res/OtherSceneBg.png");
-    painter.drawPixmap(0,0,this->width(),this->height(),pix);
-    pix.load(":/res/Title.png");
-    painter.drawPixmap((this->width()-pix.width())*0.5,30,pix.width(),pix.height(),pix);
+	QPainter painter(this);
+	QPixmap pix;
+	//background
+	pix.load(":/res/OtherSceneBg.png");
+	painter.drawPixmap(0, 0, this->width(), this->height(), pix);
+	//title
+	pix.load(":/res/Title.png");
+	painter.drawPixmap((this->width() - pix.width()) * 0.5, 30, pix.width(), pix.height(), pix);
 
 }
 
-
-
-
-
-
-
-
-
-
-
+ChooseLevelScene::~ChooseLevelScene()
+{
+}

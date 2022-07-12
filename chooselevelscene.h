@@ -1,20 +1,20 @@
-#ifndef CHOOSELEVELSCENE_H
-#define CHOOSELEVELSCENE_H
-
+#pragma once
 #include <QMainWindow>
-#include"playscene.h"
+#include"playscence.h"
 
 class ChooseLevelScene : public QMainWindow
 {
-    Q_OBJECT
+	Q_OBJECT
+
 public:
-    explicit ChooseLevelScene(QWidget *parent = nullptr);
-    void paintEvent(QPaintEvent*);
-    PlayScene* pScene = Q_NULLPTR;
+	ChooseLevelScene(QWidget* parent = Q_NULLPTR);
+	//ChooseLevelScene(QWidget* parent);
+	void paintEvent(QPaintEvent*);
+
+	~ChooseLevelScene();
+	PlayScence* pScence = Q_NULLPTR;
 
 signals:
-    void chooseSceneBack();
+	void chooseSceneBack();
 
 };
-
-#endif // CHOOSELEVELSCENE_H

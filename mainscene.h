@@ -1,24 +1,18 @@
-#ifndef MAINSCENE_H
-#define MAINSCENE_H
-
-#include <QMainWindow>
+#pragma once
+#include <QtWidgets/QMainWindow>
+#include "ui_mainscene.h"
 #include"chooselevelscene.h"
-
-QT_BEGIN_NAMESPACE
-namespace Ui { class MainScene; }
-QT_END_NAMESPACE
 
 class MainScene : public QMainWindow
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    MainScene(QWidget *parent = nullptr);
-    void paintEvent(QPaintEvent*);
-    ChooseLevelScene* chooseScene = Q_NULLPTR;
-    ~MainScene();
+	MainScene(QWidget* parent = Q_NULLPTR);
+	void paintEvent(QPaintEvent*);
+	ChooseLevelScene* chooseScene = NULL;
+
 
 private:
-    Ui::MainScene *ui;
+	Ui::MainSceneClass ui;
 };
-#endif // MAINSCENE_H

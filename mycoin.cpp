@@ -1,83 +1,86 @@
 #include "mycoin.h"
-#include<QPixmap>
-#include<QDebug>
-
+#include<qdebug.h>	
 MyCoin::MyCoin(QString btnImg)
 {
-    QPixmap pixmap;
-    bool ret = pixmap.load(btnImg);
-    if(!ret){
-        qDebug() << btnImg << "Image loading failed";
-    }
-
-    this->setFixedSize( pixmap.width(), pixmap.height() );
-    this->setStyleSheet("QPushButton{border:0px;}");
-    this->setIcon(pixmap);
-    this->setIconSize(QSize(pixmap.width(),pixmap.height()));
-    //ÂàùÂßãÂåñÂÆöÊó∂Âô®ÂØπË±°
-    timer1 = new QTimer(this);
-    timer2 = new QTimer(this);
-    connect(timer1, &QTimer::timeout, [=]() {
-        QPixmap pix;
-        QString str = QString(":/res/Coin000%1").arg(this->min++);
-        pix.load(str);
-        this->setFixedSize(pix.width(), pix.height());
-        this->setStyleSheet("QPushButton{border:0px;}");
-        this->setIcon(pix);
-        this->setIconSize(QSize(pix.width(), pix.height()));
-        //Â¶ÇÊûúÁøªÂÆå‰∫Ü Â∞Ümin=1
-        if (this->min > this->max) {
-            this->min = 1;
-            isAnimation = false;//end animation
-            timer1->stop();
-        }
-    });
-    //monitor the singal of back->front then flip the coin
-    connect(timer2, &QTimer::timeout, [=]() {
-        QPixmap pix;
-        QString str = QString(":/res/Coin000%1").arg(this->max--);
-        pix.load(str);
-        this->setFixedSize(pix.width(), pix.height());
-        this->setStyleSheet("QPushButton{border:0px;}");
-        this->setIcon(pix);
-        this->setIconSize(QSize(pix.width(), pix.height()));
-        //Â¶ÇÊûúÁøªÂÆå‰∫Ü Â∞Ümax=8
-        if (this->max < this->min) {
-            this->max = 8;
-            isAnimation = false;//end animation
-            timer2->stop();
-        }
-    });
-
+	QPixmap pix;
+	bool ret = pix.load(btnImg);
+	if (!ret) {
+		QString str = QString("Õº∆¨%1º”‘ÿ ß∞‹").arg(btnImg);
+		qDebug() << str;
+		return;
+	}
+	this->setFixedSize(pix.width(), pix.height());
+	this->setStyleSheet("QPushButton{border:0px;}");
+	this->setIcon(pix);
+	this->setIconSize(QSize(pix.width(), pix.height()));
+	//≥ı ºªØ∂® ±∆˜∂‘œÛ
+	timer1 = new QTimer(this);
+	timer2 = new QTimer(this);
+	//monitor the singal of front->back  then flip the coin
+	connect(timer1, &QTimer::timeout, [=]() {
+		QPixmap pix;
+		QString str = QString(":/res/Coin000%1").arg(this->min++);
+		pix.load(str);
+		this->setFixedSize(pix.width(), pix.height());
+		this->setStyleSheet("QPushButton{border:0px;}");
+		this->setIcon(pix);
+		this->setIconSize(QSize(pix.width(), pix.height()));
+		//»Áπ˚∑≠ÕÍ¡À Ω´min=1
+		if (this->min > this->max) {
+			this->min = 1;
+			isAnimation = false;//end animation
+			timer1->stop();
+		}
+		});
+	//monitor the singal of back->front  then flip the coin
+	connect(timer2, &QTimer::timeout, [=]() {
+		QPixmap pix;
+		QString str = QString(":/res/Coin000%1").arg(this->max--);
+		pix.load(str);
+		this->setFixedSize(pix.width(), pix.height());
+		this->setStyleSheet("QPushButton{border:0px;}");
+		this->setIcon(pix);
+		this->setIconSize(QSize(pix.width(), pix.height()));
+		//»Áπ˚∑≠ÕÍ¡À Ω´max=8
+		if (this->max < this->min) {
+			this->max = 8;
+			isAnimation = false;//end animation
+			timer2->stop();
+		}
+		});
 }
 
-void MyCoin::changeFlag()
-{
-    //Â¶ÇÊûúÊòØÊ≠£Èù¢ÔºåÊâßË°å‰∏ãÂàó‰ª£Á†Å
-    if (this->flag) {
-        timer1->start(30);
-        isAnimation = true;//start animation
-        this->flag = false;
-    }
-    else {
-        timer2->start(30);
-        isAnimation = true;//start animation
-        this->flag = true;
-    }
-}
-
-//monitor the mouse event
-//Â¶ÇÊûúÂø´ÈÄüÁÇπÂáªÔºå‰ºöÂú®ÈáëÂ∏ÅËøòÊ≤°ÊúâÊâßË°å‰∏Ä‰∏™ÂÆåÊï¥Âä®‰Ωú‰πãÂêé ÔºåÂèàÁªßÁª≠ÂºÄÂßãÊñ∞ÁöÑÂä®ÁîªÔºåÊàë‰ª¨Â∫îËØ•Âú®ÈáëÂ∏ÅÂÅöÂä®ÁîªÊúüÈó¥ÔºåÁ¶ÅÊ≠¢ÂÜçÊ¨°ÁÇπÂáªÔºåÂπ∂Âú®ÂÆåÊàêÂä®ÁîªÂêéÔºåÂºÄÂêØÁÇπÂáª
+//monitor the mouse event 
+//»Áπ˚øÏÀŸµ„ª˜£¨ª·‘⁄Ω±“ªπ√ª”–÷¥––“ª∏ˆÕÍ’˚∂Ø◊˜÷Æ∫Û £¨”÷ºÃ–¯ø™ º–¬µƒ∂Øª≠£¨Œ“√«”¶∏√‘⁄Ω±“◊ˆ∂Øª≠∆⁄º‰£¨Ω˚÷π‘Ÿ¥Œµ„ª˜£¨≤¢‘⁄ÕÍ≥…∂Øª≠∫Û£¨ø™∆Ùµ„ª˜
 void MyCoin::mousePressEvent(QMouseEvent* e)
 {
-    //if there are annimation is being playing then stop other mousevents
-    if (this->isAnimation||this->isWin) {
-        return;
-    }
-    else {
-        QPushButton::mousePressEvent(e);//can be skipped
-    }
+	//if there are annimation is being playing then stop other mousevents
+	if (this->isAnimation||this->isWin) {
+		return;
+	}
+	else {
+		QPushButton::mousePressEvent(e);//can be skipped
+	}
 }
 
 
+//∑≠√Ê
+void MyCoin::changeFlag()
+{
+	//»Áπ˚ «’˝√Ê£¨÷¥––œ¬¡–¥˙¬Î
+	if (this->flag) {
+		timer1->start(30);
+		isAnimation = true;//start animation
+		this->flag = false;
+	}
+	else {
+		timer2->start(30);
+		isAnimation = true;//start animation
+		this->flag = true;
+	}
+}
 
+
+MyCoin::~MyCoin()
+{
+}

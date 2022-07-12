@@ -1,26 +1,25 @@
-#ifndef MYCOIN_H
-#define MYCOIN_H
-
+#pragma once
 #include <QPushButton>
-#include<QTimer>
-
+#include<qtimer.h>
 
 class MyCoin : public QPushButton
 {
-    Q_OBJECT
-public:
-    MyCoin(QString btnImg);
-    void changeFlag();
-    int posX; //xåæ ‡
-    int posY; //yåæ ‡
-    int min = 1;
-    int max = 8;
-    bool flag; //æ­£åæ ‡å¿—
-    QTimer *timer1;
-    QTimer *timer2;
-    bool isWin= false;//æŒ‰é’®çš„èƒœåˆ©æ ‡å¿—
-    bool isAnimation = false;//åˆ¤æ–­åŠ¨ç”»
-    void mousePressEvent(QMouseEvent *e);
-};
+	Q_OBJECT
 
-#endif // MYCOIN_H
+public:
+	//MyCoin(QWidget *parent);
+	~MyCoin();
+	MyCoin(QString btnImg);
+	void changeFlag();
+
+	QTimer* timer1;
+	QTimer *timer2;
+	int posX; //x×ø±ê
+	int posY; //y×ø±ê
+	int min = 1;
+	int max = 8;
+	bool flag; //Õı·´±êÖ¾
+	bool isWin=false;//°´Å¥µÄÊ¤Àû±êÖ¾
+	bool isAnimation = false;//ÅĞ¶Ï¶¯»­
+	void mousePressEvent(QMouseEvent* e);
+};
